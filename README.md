@@ -14,11 +14,13 @@ The first site that uses the plugin is [fossgralnia.pl](https://fossgralnia.pl) 
 
 ## Installation
 
-**WARNING**: Before installing the plugin, make sure you have a backup of your WordPress site. I am not responsible for any data loss or other issues that may arise from using this plugin.
+> [!WARNING]
+> Before installing the plugin, make sure you have a backup of your WordPress site. I am not responsible for any data loss or other issues that may arise from using this plugin.
 
-**Downloading**: Download the newest version from [releases](https://github.com/MStankiewiczOfficial/WP-Fediverse-Meta-Tag/releases).
+**Downloading**: Download the newest version from [releases](https://github.com/MStankiewiczOfficial/WP-Fediverse-Meta-Tag/releases/latest).
 
-**Customize Settings**: Before uploading the plugin to the server, open the file `fediverse-meta-tag.php` in text editor and customize the appropriate Fediverse handles for users (change lines 51-54 for users and 56 and 61 for the default handles).
+> [!IMPORTANT]
+> Before uploading the plugin to the server, open the file `fediverse-meta-tag.php` in text editor and customize the appropriate Fediverse handles for users (change lines 51-54 for users and 56 and 61 for the default handles).
 
 ### Option 1. **Uploading via WP Dashboard**:
 
