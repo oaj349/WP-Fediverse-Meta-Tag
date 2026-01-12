@@ -2,7 +2,7 @@
 /*
 Plugin Name: Fediverse Meta Tag
 Description: Adds a custom “fediverse:creator” metatag.
-Version: 2.0.0
+Version: 2.0.1
 Author: Michał Stankiewicz
 Author URI: https://www.stankiewiczm.eu
 */
@@ -259,7 +259,7 @@ function fediverse_meta_tag_pages_enabled() {
     return (bool) get_option('fediverse_enable_pages', 1);
 }
 
-function add_fediverse_creator_meta_tag() {
+function fediverse_meta_tag_get_creator_for_current_view() {
     global $post;
 
     $fediverse_creator = '';
@@ -271,30 +271,62 @@ function add_fediverse_creator_meta_tag() {
                 $fediverse_creator = get_post_meta($post->ID, '_fediverse_creator', true);
 
                 if (empty($fediverse_creator)) {
-                    $author_id    = (int) $post->post_author;
-                    $user_handles = fediverse_meta_tag_get_user_handle_map();
+                    $author_id       = (int) $post->post_author;
+                    $user_handles    = fediverse_meta_tag_get_user_handle_map();
                     $fediverse_creator = isset($user_handles[$author_id]) ? $user_handles[$author_id] : '';
                 }
-            } else {
-                $fediverse_creator = '';
             }
         } elseif (is_single()) {
             $fediverse_creator = get_post_meta($post->ID, '_fediverse_creator', true);
 
             if (empty($fediverse_creator)) {
-                $author_id    = (int) $post->post_author;
-                $user_handles = fediverse_meta_tag_get_user_handle_map();
+                $author_id       = (int) $post->post_author;
+                $user_handles    = fediverse_meta_tag_get_user_handle_map();
                 $fediverse_creator = isset($user_handles[$author_id]) ? $user_handles[$author_id] : '';
             }
-        } else {
-            $fediverse_creator = '';
         }
-    } else {
-        $fediverse_creator = '';
     }
+
+    return $fediverse_creator;
+}
+
+function add_fediverse_creator_meta_tag() {
+    $fediverse_creator = fediverse_meta_tag_get_creator_for_current_view();
 
     if (!empty($fediverse_creator)) {
         echo '<meta name="fediverse:creator" content="' . esc_attr($fediverse_creator) . '">';
     }
 }
 add_action('wp_head', 'add_fediverse_creator_meta_tag');
+
+function fediverse_meta_tag_start_buffer() {
+    if (is_admin() || is_feed() || is_robots() || is_trackback()) {
+        return;
+    }
+
+    ob_start('fediverse_meta_tag_filter_output');
+}
+add_action('template_redirect', 'fediverse_meta_tag_start_buffer', 0);
+
+function fediverse_meta_tag_filter_output($html) {
+    if (stripos($html, 'fediverse:creator') === false) {
+        return $html;
+    }
+
+    $fediverse_creator = fediverse_meta_tag_get_creator_for_current_view();
+
+    $clean_html = preg_replace("/<meta\s+[^>]*name\s*=\s*[\"']fediverse:creator[\"'][^>]*>/i", '', $html);
+
+    if (empty($fediverse_creator)) {
+        return $clean_html;
+    }
+
+    $meta_tag = "\n<meta name=\"fediverse:creator\" content=\"" . esc_attr($fediverse_creator) . "\">\n";
+
+    $head_pos = stripos($clean_html, '</head>');
+    if ($head_pos !== false) {
+        return substr_replace($clean_html, $meta_tag, $head_pos, 0);
+    }
+
+    return $clean_html . $meta_tag;
+}

@@ -2,13 +2,13 @@
 
 The "Fediverse Meta Tag" plugin adds a custom meta tag `fediverse:creator` to posts and pages on your WordPress blog. It allows you to associate a Fediverse user identifier (e.g., Mastodon) with a specific post or page, making it easier for other platforms to identify the content creator within the Fediverse social networks.
 
-The first site that uses the plugin is [fossgralnia.pl](https://fossgralnia.pl) - on it you can see how it works!
+One of the sites that uses this plugin is the online magazine [Kontrabanda](https://kontrabanda.net) - on it you can see how it works!
 
 ## Features
 
 - Adds a metadata field to the post editor (and optionally the page editor) for entering the `fediverse:creator` tag.
 - Automatically uses the handle mapped to the post author's WordPress account (when defined in settings); if no handle exists, the meta tag is omitted.
-- For other post types, assigns a static `fediverse:creator` tag.
+- Removes any existing `fediverse:creator` meta tags added by other plugins or themes and outputs a single, consolidated tag.
 - Configure fallback Fediverse handles for any WordPress user from **Settings > Fediverse Meta Tag** without editing code.
 
 ![](image.png)
@@ -41,12 +41,12 @@ After uploading, go to the **Plugins** section and activate "Fediverse Meta Tag"
 
 ## Usage
 
-The extension automatically adds the `fediverse:creator` tag with the author to the page header for each post or page (according to the settings before installation). To modify the tag for a specific entry only, follow these steps:
+The extension automatically adds the `fediverse:creator` tag with the author to the page header for each post or page. To modify the tag for a specific entry only, follow these steps:
 
 1. Navigate to the post or (if enabled) page editor.
 2. You will see a new field "Fediverse Creator Tag" in the metabox on the right side.
 3. Enter the Fediverse username (e.g., `user@mastodon.social`).
-4. After saving, the meta tag will only appear if this field or the author mapping contains a handle.
+4. After saving, the meta tag will only appear if this field or the author mapping contains a handle; any duplicate `fediverse:creator` tags from other plugins will be removed.
 
 ## Assigning handles to users
 
@@ -60,3 +60,7 @@ The extension automatically adds the `fediverse:creator` tag with the author to 
 - Open **Settings > Fediverse Meta Tag** to manage as many user-to-handle mappings as you need.
 - Use the checkbox on the same settings screen to decide whether the plugin should add the meta box and meta tag to pages.
 - If neither the per-entry field nor a mapped handle is present, the plugin intentionally skips adding the `fediverse:creator` meta tag, ensuring you never expose placeholder values.
+
+## Compatibility
+
+- The plugin cleans up all existing `fediverse:creator` meta tags in the rendered HTML and inserts one authoritative tag based on your settings. This prevents conflicts when other plugins or themes also emit the same meta tag.
