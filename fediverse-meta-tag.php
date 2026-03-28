@@ -2,7 +2,7 @@
 /*
 Plugin Name: Fediverse Meta Tag
 Description: Adds a custom “fediverse:creator” metatag.
-Version: 2.0.1
+Version: 2.1.0
 Author: Michał Stankiewicz
 Author URI: https://www.stankiewiczm.eu
 */
@@ -330,3 +330,34 @@ function fediverse_meta_tag_filter_output($html) {
 
     return $clean_html . $meta_tag;
 }
+
+add_action('rest_api_init', function () {
+    register_rest_field(
+        ['post', 'page'],
+        'fediverse_creator',
+        [
+            'get_callback' => function ($post_arr) {
+                $post_id = $post_arr['id'];
+                $type = get_post_type($post_id);
+                if ($type === 'page' && !fediverse_meta_tag_pages_enabled()) {
+                    return null;
+                }
+                $meta = get_post_meta($post_id, '_fediverse_creator', true);
+                if (!empty($meta)) {
+                    return $meta;
+                }
+                $author_id = (int) get_post_field('post_author', $post_id);
+                $user_handles = fediverse_meta_tag_get_user_handle_map();
+                if (isset($user_handles[$author_id])) {
+                    return $user_handles[$author_id];
+                }
+                return null;
+            },
+            'schema' => [
+                'description' => __('Resolved fediverse:creator handle for this post/page', 'fediverse-meta-tag'),
+                'type' => 'string',
+                'context' => ['view', 'edit'],
+            ],
+        ]
+    );
+});
