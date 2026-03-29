@@ -9,7 +9,8 @@ One of the sites that uses this plugin is the online magazine [Kontrabanda](http
 - Adds a metadata field to the post editor (and optionally the page editor) for entering the `fediverse:creator` tag.
 - Automatically uses the handle mapped to the post author's WordPress account (when defined in settings); if no handle exists, the meta tag is omitted.
 - Removes any existing `fediverse:creator` meta tags added by other plugins or themes and outputs a single, consolidated tag.
-- Configure fallback Fediverse handles for any WordPress user from **Settings > Fediverse Meta Tag** without editing code.
+- Exposes a dedicated parameter inside WordPress' REST API endpoint for posts, which may prove useful if you use WordPress just to handle articles' content on your website.
+- You can also configure fallback Fediverse handles for any WordPress user from **Settings > Fediverse Meta Tag** without editing code.
 
 ![](image.png)
 
